@@ -1,0 +1,35 @@
+name: Expand NAIMAA AI source
+on:
+  push:
+    branches: [main]
+    paths:
+      - "naimaa-ai-src.b64"
+      - ".github/workflows/unpack-naimaa.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Decode source bundle
+        shell: bash
+        run: |
+          base64 -d naimaa-ai-src.b64 > /tmp/naimaa-ai-src.tgz
+          tar -xzf /tmp/naimaa-ai-src.tgz --exclude='./.github/*'
+      - name: Commit expanded project
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No source changes"
+          else
+            git commit -m "feat: add NAIMAA AI agentic commerce MVP"
+            git push origin HEAD:main
+          fi
