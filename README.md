@@ -1,0 +1,3 @@
+# NAIMAA AI
+
+Initializing hackathon repository…
